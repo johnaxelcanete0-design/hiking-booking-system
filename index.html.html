@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lakbay Gabay — Single File App</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg-img: url('1.jpg');
+      --primary: #198754;
+      --accent: #00c16e;
+      --glass: rgba(255,255,255,0.12);
+      --glass-strong: rgba(255,255,255,0.92);
+      --muted: #6b6b6b;
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      --radius: 14px;
+      --max-width: 1200px;
+    }
+
+    /* ---------- Reset & Base ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial;
+      background: var(--bg-img) no-repeat center/cover fixed;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:#0b0b0b;
+      line-height:1.45;
+    }
+
+    /* Container to center content on wide screens */
+    .site-wrap{max-width:var(--max-width);margin:0 auto;padding:24px;}
+
+    /* ---------- NAVBAR (ICON BASED) ---------- */
+    header.navbar{
+      position:fixed;left:0;right:0;top:0;z-index:999;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 22px;
+      background: rgba(0,0,0,0.35); /* dark glass for contrast */
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+    .nav-left{display:flex;align-items:center;gap:12px}
+    .nav-left img.logo{width:48px;height:48px;border-radius:10px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+    .brand{color:#fff;font-weight:700;font-size:18px;letter-spacing:0.2px;text-shadow:0 2px 8px rgba(0,0,0,0.5)}
+    nav.nav-links{display:flex;gap:8px;align-items:center}
+    nav.nav-links a{
+      color:#fff;text-decoration:none;font-weight:600;
+      display:flex;flex-direction:column;align-items:center;padding:8px 10px;border-radius:10px;
+      font-size:12px;opacity:0.95;transition:transform .18s ease, background .18s ease, color .18s ease;
+    }
+    nav.nav-links a i{font-size:18px;margin-bottom:4px}
+    nav.nav-links a.active, nav.nav-links a:hover{
+      color:var(--accent);transform:translateY(-4px);
+      background: rgba(255,255,255,0.03);
+    }
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .login-link{
+      color:#fff;background:transparent;border:1px solid rgba(255,255,255,0.12);padding:8px 12px;border-radius:10px;font-weight:700;text-decoration:none;
+    }
+    .menu-toggle{display:none;color:white;font-size:20px;border:none;background:none}
+
+    /* Push content below navbar */
+    main { padding-top: 120px; }
+
+    /* ---------- HERO / HOME ---------- */
+    .hero{
+      min-height:75vh;display:flex;align-items:center;justify-content:center;padding:48px 16px;
+      position:relative;
+    }
+    .hero::after{
+      content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.48));
+    }
+    .hero-card{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 980px;
+  padding: 48px;
+  border-radius: var(--radius);
+
+  /* 🔥 Totally transparent (no color at all) */
+  background: rgba(255,255,255,0);
+  backdrop-filter: blur(18px); /* mas malakas na glass blur */
+
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  color: #fff;
+  text-align: center;
+}
+
+
+    .hero-card h1{font-size:42px;margin:0 0 10px 0;line-height:1.05;font-weight:800;letter-spacing:-0.4px}
+    .hero-card p{margin:0 0 22px;color:#eaeaea;font-size:18px}
+    .hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:12px;font-weight:700;text-decoration:none;border:0;cursor:pointer;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .btn-primary{background:linear-gradient(90deg,var(--accent),var(--primary));color:white;box-shadow:0 10px 30px rgba(0,0,0,0.28)}
+    .btn-ghost{background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.06)}
+    .btn:hover{transform:translateY(-4px)}
+
+    /* ---------- FEATURES ROW ---------- */
+    .features{display:flex;gap:18px;margin-top:28px;justify-content:center;flex-wrap:wrap}
+    .feature{
+      background:var(--glass-strong);padding:18px;border-radius:12px;min-width:220px;display:flex;gap:12px;align-items:center;box-shadow:0 8px 22px rgba(0,0,0,0.12)
+    }
+    .feature i{font-size:28px;color:var(--primary);width:48px;height:48px;background:linear-gradient(180deg,#fff,#f6f6f6);border-radius:10px;display:flex;align-items:center;justify-content:center}
+    .feature h4{margin:0;font-size:15px}
+
+    /* ---------- PAGE SECTIONS (Hidden switching) ---------- */
+    .page{display:none;padding:32px 16px;background:rgba(255,255,255,0.85);border-radius:12px;margin-top:22px;box-shadow:0 8px 25px rgba(0,0,0,0.12)}
+    .page.active{display:block}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .section-head h2{margin:0;font-size:22px}
+
+    /* ---------- DESTINATIONS GRID ---------- */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{
+      background:white;border-radius:12px;padding:12px;box-shadow:0 8px 20px rgba(0,0,0,0.08);display:flex;flex-direction:column;gap:10px;overflow:hidden;
+      transition:transform .18s ease, box-shadow .18s ease;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,0.12)}
+    .card img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+    .card .meta{display:flex;justify-content:space-between;align-items:center;gap:6px}
+    .badge{font-weight:700;padding:6px 10px;border-radius:30px;font-size:12px;color:white;background:var(--primary)}
+    /* Difficulty colors */
+.badge.beginner {
+  background-color: #2ecc71; /* green */
+}
+
+.badge.intermediate {
+  background-color: #f39c12; /* orange */
+}
+
+.badge.advanced {
+  background-color: #e74c3c; /* red */
+}
+
+    .card h3{margin:0;font-size:18px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .card .card-actions{display:flex;gap:8px;margin-top:auto}
+    .small-btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
+    .small-btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+    .small-btn.primary{background:var(--primary);color:white}
+
+    /* Destination modal */
+    .modal{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:1200;padding:18px;visibility:hidden;opacity:0;transition:opacity .18s ease,visibility .18s;
+    }
+    .modal.open{visibility:visible;opacity:1}
+    .modal-card{width:100%;max-width:900px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+    .modal-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+    .modal-body img{width:100%;height:100%;object-fit:cover}
+    .modal-content{padding:18px}
+    .close-x{position:absolute;right:10px;top:8px;background:transparent;border:0;font-size:20px;cursor:pointer}
+
+    /* ---------- BOOKING FORM ---------- */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    label{display:block;font-weight:600;margin-bottom:6px}
+    input, select, textarea, button{width:100%;padding:10px;border-radius:10px;border:1px solid #d7d7d7;font-size:14px}
+    textarea{min-height:100px;resize:vertical}
+    .success {background: #e6ffef;border-left:4px solid var(--accent);padding:12px;border-radius:8px;margin-bottom:12px;color:#06461a}
+
+    /* ---------- ABOUT & TEAM ---------- */
+    .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+    .member{background:white;border-radius:12px;padding:14px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,0.08)}
+    .member img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:10px}
+
+    /* ---------- CONTACT ---------- */
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .socials a{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:8px;background:var(--glass-strong);margin-right:8px;text-decoration:none;color:#111;font-weight:700}
+
+    footer {
+  margin-top: 28px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  text-align: center;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.footer-section {
+  min-width: 150px;
+}
+
+.footer-section h4 {
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.footer-section a {
+  display: block;
+  color: var(--primary);
+  text-decoration: none;
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.footer-section p {
+  margin: 3px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+footer small {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+    /* ---------- Responsive ---------- */
+    @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.team-grid{grid-template-columns:repeat(2,1fr)}.modal-body{grid-template-columns:1fr}}
+    @media(max-width:700px){
+      nav.nav-links{display:none}
+      .menu-toggle{display:block}
+      .grid{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .team-grid{grid-template-columns:1fr}
+      .contact-grid{grid-template-columns:1fr}
+      .features{flex-direction:column;align-items:center}
+    }
+    header.navbar {
+  z-index: 1000 !important;
+}
+
+.hero-card {
+  position: relative;
+  z-index: 1;
+}
+
+main {
+  padding-top: 60px !important;
+}
+.team-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.team-card {
+  width: 100%;
+  max-width: 1050px;      /* pahaba pero hindi sobrang laki */
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.team-photo {
+  width: 100%;
+  height: 320px;          /* pwede mong baguhin (280–400 ok) */
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.team-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 10px 0 4px;
+}
+
+.team-desc {
+  color: #555;
+  margin: 0;
+  font-size: 16px;
+}
+/* Fix para makita ang text sa feature cards */
+.feature h4,
+.feature p {
+    color: #1a1a1a !important;  /* Dark text para readable */
+    font-weight: 500;
+}
+#signupBtn {
+  color: #000 !important;         /* black para super visible */
+  font-weight: 600;
+}
+
+#signupBtn:hover {
+  color: #008000 !important;      /* green on hover */
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+ <header class="navbar">
+
+  <div class="nav-left">
+    <img src="8.jpg" class="logo" alt="logo">
+    <div class="brand">Lakbay Gabay</div>
+  </div>
+
+  <nav class="nav-links" id="mainNav">
+    <a href="#" data-page="home" class="nav-item active"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="#" data-page="destinations" class="nav-item"><i class="fa-solid fa-mountain"></i>Destinations</a>
+    <a href="#" data-page="booking" class="nav-item"><i class="fa-solid fa-calendar-check"></i>Booking</a>
+    <a href="#" data-page="about" class="nav-item"><i class="fa-solid fa-users"></i>About</a>
+    <a href="#" data-page="contact" class="nav-item"><i class="fa-solid fa-envelope"></i>Contact</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="menu-toggle" id="mobileToggle"><i class="fa-solid fa-bars"></i></button>
+    <a class="login-link" href="#" onclick="showPage('login')">
+      <i class="fa-solid fa-right-to-bracket"></i>&nbsp;Log in
+    </a>
+  </div>
+
+</header>
+
+
+  <main class="site-wrap">
+
+    <!-- HOME -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="hero-card">
+          <h1>Discover the Philippines — One Trail at a Time</h1>
+          <p>Guided hikes, easy booking, and curated routes for every skill level. Explore mountains, lakes, and scenic viewpoints with Lakbay Gabay.</p>
+
+          <div class="hero-ctas">
+            <button class="btn btn-primary" onclick="scrollToPage('destinations')"><i class="fa-solid fa-mountain"></i> Explore Destinations</button>
+            <button class="btn btn-ghost" onclick="scrollToPage('booking')"><i class="fa-solid fa-calendar-plus"></i> Book a Hike</button>
+          </div>
+
+          <div class="features" style="margin-top:26px">
+            <div class="feature">
+              <i class="fa-solid fa-shield-halved"></i>
+              <div><h4>Safe Guided Trails</h4><small style="color:var(--muted)">Experienced local guides</small></div>
+            </div>
+            <div class="feature">
+              <i class="fa-solid fa-ticket-simple"></i>
+              <div><h4>Hassle-Free Booking</h4><small style="color:var(--muted)">Easy, secure, fast</small></div>
+            </div>
+            <div class="feature">
+              <i class="fa-solid fa-camera"></i>
+              <div><h4>Scenic Views</h4><small style="color:var(--muted)">Iconic photo spots</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTINATIONS -->
+    <section id="destinations" class="page">
+      <div class="section-head">
+        <h2>Hiking Destinations</h2>
+        <div>
+          <input type="text" id="searchDest" placeholder="Search (e.g. Pulag, Batulao)" style="padding:8px;border-radius:8px;border:1px solid #dcdcdc">
+        </div>
+      </div>
+
+      <div class="grid" id="destGrid">
+        <!-- Destination cards inserted by JS -->
+      </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="booking" class="page">
+      <div class="section-head"><h2>Booking of Hikes</h2></div>
+
+      <div id="bookingMsg" style="display:none" class="success">Booking saved. You can view bookings in your browser's localStorage.</div>
+
+      <form id="bookingForm" class="form-grid" style="gap:16px">
+        <div>
+          <label for="bkName">Full Name</label>
+          <input id="bkName" required>
+        </div>
+
+        <div>
+          <label for="bkEmail">Email</label>
+          <input id="bkEmail" type="email" required>
+        </div>
+
+        <div>
+  <label for="bkPhone">Phone</label>
+  <input id="bkPhone" type="tel" required maxlength="11" inputmode="numeric" pattern="\d{11}" placeholder="09xxxxxxxxx">
+</div>
+
+        <div>
+          <label for="bkDestination">Destination</label>
+          <select id="bkDestination" required>
+            <option value="">-- Select destination --</option>
+          </select>
+        </div>
+
+        <div>
+  <label for="bkDate">Date of Hike</label>
+  <input id="bkDate" type="date" required>
+</div>
+
+        <div>
+          <label for="bkSize">Group Size</label>
+          <input id="bkSize" type="number" min="1" max="20" value="1" required>
+        </div>
+
+        <div style="grid-column:1 / -1">
+          <label for="bkRemarks">Remarks</label>
+          <textarea id="bkRemarks" placeholder="Any health concerns, special requests..."></textarea>
+        </div>
+        <div style="grid-column:1 / -1">
+  <label>Total Amount</label>
+  <input id="bkTotal" readonly>
+  <p id="remainingSlots" style="font-weight:600;"></p>
+
+</div>
+
+
+        <div style="grid-column:1 / -1;text-align:right">
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Submit Booking</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page">
+      <div class="section-head"><h2>About Lakbay Gabay</h2></div>
+      <p>We are a community-first adventure company focused on safe, guided hikes around the Philippines. We promote responsible tourism and partner with local guides to ensure each trip is enjoyable and low-impact.</p>
+
+      <div style="margin-top:18px">
+        <h3>Our Team</h3>
+        <div class="team-wrapper">
+  <div class="team-card">
+      <img src="9.jpg" alt="Our Team" class="team-photo">
+
+      <h3 class="team-title">Lakbay Gabay Team</h3>
+      <p class="team-desc">Guides • Operations • Safety</p>
+  </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="page">
+      <div class="section-head"><h2>Contact Us</h2></div>
+
+      <div class="contact-grid">
+        <div>
+          <p><strong>Address</strong><br> Parañaque, Philippines</p>
+          <p><strong>Phone</strong><br><a href="tel:+639189368311">0918 936 8311</a></p>
+          <p><strong>Email</strong><br><a href="mailto:lakbaygabay21@gmail.com">lakbaygabay21@gmail.com</a></p>
+
+          <div class="socials" style="margin-top:12px">
+            <a class="social" href="https://instagram.com/lakbaygabayadventures" target="_blank"><i class="fa-brands fa-instagram"></i>&nbsp;Instagram</a>
+            <a class="social" href="https://wa.me/639189368311" target="_blank"><i class="fa-brands fa-whatsapp"></i>&nbsp;WhatsApp</a>
+          </div>
+        </div>
+
+        <div>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3850.0000000000005!2d121.00000000000001!3d14.500000000000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDI5JzM2LjAiTiAxMjHCsDAyJzAwLjAiRQ!5e0!3m2!1sen!2sph!4v0000000000000" width="100%" height="280" style="border:0;border-radius:8px" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN (simple client side) -->
+    <section id="login" class="page">
+      <div class="section-head"><h2>Log In / Sign Up</h2></div>
+      
+      <form id="authForm" style="max-width:520px">
+        <label>Email</label><input id="authEmail" type="email" required>
+        <label>Password</label><input id="authPass" type="password" required>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button type="button" id="loginBtn" class="btn btn-primary">Log In</button>
+          <button type="button" id="signupBtn" class="btn btn-ghost">Sign Up</button>
+        </div>
+      </form>
+      
+    </section>
+    <section id="admin" class="page">
+  <div class="section-head">
+    <h2>Admin Dashboard</h2>
+  </div>
+
+  <button class="btn btn-primary" onclick="viewBookings()">View Bookings</button>
+  <button class="btn btn-ghost" onclick="adminLogout()">Logout</button>
+  <div style="margin:12px 0; display:flex; gap:8px; flex-wrap:wrap">
+  <input id="searchName" placeholder="Search name">
+  <select id="filterDestination">
+    <option value="">All destinations</option>
+  </select>
+  <button class="small-btn primary" onclick="applyFilter()">Apply</button>
+</div>
+
+
+  <div id="adminContent" style="margin-top:16px"></div>
+</section>
+
+
+    <!-- FOOTER -->
+   <footer>
+  <div class="footer-container">
+
+    <div class="footer-section">
+      <h4>Lakbay Gabay</h4>
+      <p>Your trusted companion for every trail.</p>
+    </div>
+
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="#" onclick="showPage('home')">Home</a>
+      <a href="#" onclick="showPage('destinations')">Destinations</a>
+      <a href="#" onclick="showPage('booking')">Booking</a>
+      <a href="#" onclick="showPage('about')">About</a>
+      <a href="#" onclick="showPage('contact')">Contact</a>
+    </div>
+    <!-- ADMIN PAGE (ADD ONLY) -->
+
+
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email:lakbay.gabay21@.com</p>
+      <p>Phone: +6318 936 8311</p>
+    </div>
+
+  </div>
+
+  <small>© <span id="year"></span> Lakbay Gabay — Built with ❤</small>
+</footer>
+
+  </main>
+
+  <!-- DESTINATION MODAL -->
+  <div class="modal" id="destModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="close-x" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-body">
+        <img src="" id="modalImg" alt="destination">
+        <div class="modal-content">
+          <h3 id="modalTitle">Title</h3>
+          <p id="modalLocation" style="color:var(--muted)"></p>
+          <p id="modalDesc"></p>
+          <p><strong>Difficulty:</strong> <span id="modalDiff" class="badge"></span></p>
+          <div style="margin-top:14px">
+            <button class="small-btn primary" id="modalBookBtn"><i class="fa-solid fa-calendar-plus"></i> Book this Hike</button>
+            <button class="small-btn ghost" onclick="closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 🚫 Disable past dates
+const today = new Date().toISOString().split('T')[0];
+$('#bkDate').attr('min', today);
+
+    function updateTotal(){
+  const destId = $('#bkDestination').val();
+  const size = parseInt($('#bkSize').val()) || 1;
+  const date = $('#bkDate').val();
+
+  const dest = DESTINATIONS.find(d => d.id === destId);
+  const totalField = $('#bkTotal');
+  const remainingEl = $('#remainingSlots');
+
+  if(!dest){
+    totalField.val('');
+    remainingEl.text('');
+    return;
+  }
+
+  const total = dest.price * size;
+  totalField.val('₱' + total.toLocaleString());
+
+  const remaining = getRemainingSlots(destId, date);
+
+  if(remaining !== null){
+    if(remaining <= 0){
+      remainingEl.text('Fully Booked').css('color','red');
+    } else {
+      remainingEl
+        .text(`Remaining slots: ${remaining}`)
+        .css('color','green');
+
+      if(size > remaining){
+        remainingEl
+          .text(`Only ${remaining} slots left`)
+          .css('color','orange');
+      }
+    }
+  }
+}
+
+
+$(function(){
+  // ===== ADMIN ACCOUNT (ADD ONLY) =====
+if (!localStorage.getItem('adminAccount')) {
+  localStorage.setItem(
+    'adminAccount',
+    JSON.stringify({
+      email: 'admin@lakbaygabay.com',
+      password: 'admin123'
+    })
+  );
+}
+
+
+/* ===== UTIL ===== */
+const pages = ['home','destinations','booking','about','contact','login','admin'];
+
+
+window.showPage = function(page){
+  $('.page').removeClass('active');
+  $('#' + page).addClass('active');
+
+  $('nav.nav-links a').removeClass('active');
+  $('nav.nav-links a[data-page="'+page+'"]').addClass('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.scrollToPage = function(page){
+  showPage(page);
+};
+
+$('#year').text(new Date().getFullYear());
+
+/* ===== NAV ===== */
+$('nav.nav-links a').on('click', function(e){
+  e.preventDefault();
+  showPage($(this).data('page'));
+});
+
+$('#mobileToggle').on('click', function(){
+  $('#mainNav').toggle();
+});
+
+/* ===== DESTINATIONS DATA ===== */
+const DESTINATIONS = [
+  {
+    id: 'batulao',
+    title: 'Mt. Batulao',
+    location: 'Nasugbu, Batangas',
+    img: '2.JPG',
+    desc: 'Popular beginner-friendly mountain with beautiful ridges and sunrise views.',
+    difficulty: 'Beginner',
+    price: 1000,
+    capacity: 30
+  },
+  {
+    id: 'ulap',
+    title: 'Mt. Ulap',
+    location: 'Itogon, Benguet',
+    img: '3.jpg',
+    desc: 'Scenic ridgewalks and famous for its grassland trails.',
+    difficulty: 'Intermediate',
+    price: 1200,
+    capacity: 25
+  },
+  {
+    id: 'pulag',
+    title: 'Mt. Pulag',
+    location: 'Benguet / Ifugao',
+    img: '4.jpg',
+    desc: 'Highest peak in Luzon with iconic sea of clouds sunrise.',
+    difficulty: 'Advanced',
+    price: 1500,
+    capacity: 20
+  },
+  {
+    id: 'makiling',
+    title: 'Mt. Makiling',
+    location: 'Laguna',
+    img: '5.JPG',
+    desc: 'Accessible and educational trails.',
+    difficulty: 'Beginner',
+    price: 800,
+    capacity: 40
+  },
+  {
+    id: 'talamitam',
+    title: 'Mt. Talamitam',
+    location: 'Nasugbu, Batangas',
+    img: '6.jpg',
+    desc: 'Gentle trails and family-friendly picnic spots.',
+    difficulty: 'Beginner',
+    price: 700,
+    capacity: 30
+  }
+];
+function updateTotal(){
+  const destId = $('#bkDestination').val();
+  const size = parseInt($('#bkSize').val()) || 1;
+  const date = $('#bkDate').val();
+
+  const dest = DESTINATIONS.find(d => d.id === destId);
+  const totalField = $('#bkTotal');
+  const remainingEl = $('#remainingSlots');
+
+  if(!dest){
+    totalField.val('');
+    remainingEl.text('');
+    return;
+  }
+
+  // 🔢 Total Amount
+  const total = dest.price * size;
+  totalField.val('₱' + total.toLocaleString());
+
+  // 📊 Remaining Slots
+  const remaining = getRemainingSlots(destId, date);
+
+  if(remaining !== null){
+    if(remaining <= 0){
+      remainingEl.text('Fully Booked').css('color','red');
+    } else {
+      remainingEl
+        .text(`Remaining slots: ${remaining}`)
+        .css('color','green');
+
+      // ⚠️ Over limit warning
+      if(size > remaining){
+        remainingEl
+          .text(`Only ${remaining} slots left`)
+          .css('color','orange');
+      }
+    }
+  }
+}
+
+// AUTO-COMPUTE EVENTS
+$('#bkDestination').on('change', updateTotal);
+$('#bkSize').on('input change', updateTotal);
+
+function getRemainingSlots(destId, date){
+  if(!date) return null;
+
+  const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  const dest = DESTINATIONS.find(d => d.id === destId);
+  if(!dest) return null;
+
+  const used = bookings
+    .filter(b => b.destinationId === destId && b.date === date)
+    .reduce((sum, b) => sum + Number(b.groupSize || 0), 0);
+
+  return dest.capacity - used;
+}
+
+
+
+/* ===== RENDER DESTINATIONS ===== */
+function renderDestinations(list){
+  $('#destGrid').empty();
+  $('#bkDestination').html('<option value="">-- Select destination --</option>');
+
+  $.each(list, function(_, d){
+    const remaining = getRemainingSlots(d.id, $('#bkDate').val());
+
+$('#destGrid').append(`
+  <div class="card">
+    ${remaining !== null && remaining <= 0 ? '<span class="badge" style="background:red">Fully Booked</span>' : ''}
+
+        <img src="${d.img}">
+        <div>
+          <div class="meta">
+            <h3>${d.title}</h3>
+            <span class="badge ${d.difficulty.toLowerCase()}">${d.difficulty}</span>
+          </div>
+          <p>${d.location}</p>
+          <p>${d.desc}</p>
+<p><strong>Price:</strong> ₱${d.price}</p>
+
+        </div>
+        <div class="card-actions">
+          <button class="small-btn ghost viewBtn" data-id="${d.id}">View</button>
+          <button class="small-btn primary bookBtn" data-id="${d.id}">Book</button>
+
+        </div>
+      </div>
+    `);
+
+    $('#bkDestination').append(
+  `<option value="${d.id}">${d.title} – ₱${d.price}</option>`
+);
+
+  });
+}
+renderDestinations(DESTINATIONS);
+
+/* ===== SEARCH ===== */
+$('#searchDest').on('input', function(){
+  const q = $(this).val().toLowerCase();
+  renderDestinations(
+    DESTINATIONS.filter(d =>
+      d.title.toLowerCase().includes(q) ||
+      d.location.toLowerCase().includes(q) ||
+      d.desc.toLowerCase().includes(q)
+    )
+  );
+});
+
+/* ===== MODAL ===== */
+window.openModal = function(id){
+  const d = DESTINATIONS.find(x => x.id === id);
+  if(!d) return;
+
+  $('#modalImg').attr('src', d.img);
+  $('#modalTitle').text(d.title);
+  $('#modalLocation').text(d.location);
+  $('#modalDesc').text(d.desc);
+  $('#modalDiff')
+    .text(d.difficulty)
+    .attr('class', 'badge ' + d.difficulty.toLowerCase());
+
+  $('#modalBookBtn').off().on('click', function(){
+    showPage('booking');
+   $('#bkDestination').val(d.id);
+
+    closeModal();
+  });
+
+  $('#destModal').addClass('open');
+};
+
+window.closeModal = function(){
+  $('#destModal').removeClass('open');
+};
+
+$(document).on('click', '.viewBtn', function(){
+  openModal($(this).data('id'));
+});
+
+
+
+/* ===== BOOKING ===== */
+$('#bookingForm').on('submit', function(e){
+  e.preventDefault();
+  
+
+  const dest = DESTINATIONS.find(d => d.id === $('#bkDestination').val());
+    const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  const selectedDate = $('#bkDate').val();
+  const groupSize = Number($('#bkSize').val());
+  $('#bkDestination, #bkDate').on('change', function(){
+  const destId = $('#bkDestination').val();
+  const date = $('#bkDate').val();
+  if(!destId || !date) return;
+
+  const remaining = getRemainingSlots(destId, date);
+  const el = $('#remainingSlots');
+
+  if(remaining <= 0){
+    el.text('Fully Booked').css('color','red');
+  } else {
+    el.text(`Remaining slots: ${remaining}`).css('color','green');
+  }
+});
+
+
+  // total hikers already booked for same destination + date
+  const totalHikers = bookings
+    .filter(b => b.destinationId === dest.id && b.date === selectedDate)
+
+    .reduce((sum, b) => sum + Number(b.groupSize || 0), 0);
+
+  if (totalHikers + groupSize > dest.capacity) {
+    alert('Booking failed: maximum hikers reached for this destination on selected date.');
+    return;
+  }
+
+
+const booking = {
+  id: 'bk_' + Date.now(),
+  name: $('#bkName').val(),
+  email: $('#bkEmail').val(),
+  phone: $('#bkPhone').val(),
+  destinationId: dest.id,
+destination: dest.title,
+
+  price: dest.price,
+  groupSize: $('#bkSize').val(),
+  total: dest.price * $('#bkSize').val(),
+  date: $('#bkDate').val(),
+  remarks: $('#bkRemarks').val(),
+  status: 'Pending'
+};
+
+
+  const saved = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  saved.push(booking);
+  localStorage.setItem('lg_bookings', JSON.stringify(saved));
+
+  alert('Booking successful! We will contact you soon.');
+
+  this.reset();
+  showPage('home');
+});
+
+/* ===== LOGIN / SIGNUP ===== */
+$('#loginBtn').on('click', function(){
+  const email = $('#authEmail').val();
+  const pass = $('#authPass').val();
+
+  const admin = JSON.parse(localStorage.getItem('adminAccount'));
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+  // ✅ ADMIN LOGIN (ADD)
+  if (email === admin.email && pass === admin.password) {
+  alert('Admin login successful!');
+  showPage('admin');
+  loadAdminFilters();
+  return;
+}
+
+
+  // ✅ USER LOGIN (EXISTING)
+  if(users[email] === pass){
+    alert('Login successful!');
+    showPage('home');
+  } else {
+    alert('Invalid login.');
+  }
+});
+
+
+$('#signupBtn').on('click', function(){
+  const email = $('#authEmail').val();
+  const pass = $('#authPass').val();
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+  users[email] = pass;
+  localStorage.setItem('users', JSON.stringify(users));
+
+  alert('Account created!');
+  showPage('home');
+});
+
+});
+// ===== ADMIN FUNCTIONS (ADD ONLY) =====
+window.viewBookings = function(){
+  const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  let html = '<h3>All Bookings</h3>';
+
+  if(bookings.length === 0){
+    html += '<p>No bookings yet.</p>';
+  } else {
+    html += '<ul>';
+    bookings.forEach((b, i) => {
+  html += `
+    <li style="margin-bottom:12px">
+      <strong>Name:</strong> ${b.name}<br>
+      <strong>Email:</strong> ${b.email}<br>
+      <strong>Phone:</strong> ${b.phone}<br>
+      <strong>Destination:</strong> ${b.destination}<br>
+      <strong>Date:</strong> ${b.date}<br>
+      <strong>Group Size:</strong> ${b.groupSize}<br>
+      <strong>Total Amount:</strong> ₱${b.total}<br>
+
+      <strong>Status:</strong>
+      <select onchange="updateStatus(${i}, this.value)">
+        <option value="Pending" ${b.status==='Pending'?'selected':''}>Pending</option>
+        <option value="Approved" ${b.status==='Approved'?'selected':''}>Approved</option>
+        <option value="Cancelled" ${b.status==='Cancelled'?'selected':''}>Cancelled</option>
+      </select>
+      <br><br>
+
+      <button class="small-btn danger" onclick="deleteBooking(${i})">
+        Delete
+      </button>
+    </li>
+    <hr>
+  `;
+});
+
+
+
+    html += '</ul>';
+  }
+
+  $('#adminContent').html(html);
+};
+
+window.adminLogout = function(){
+  showPage('home');
+};
+window.deleteBooking = function(index){
+  if(!confirm('Delete this booking?')) return;
+
+  const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  bookings.splice(index, 1);
+  localStorage.setItem('lg_bookings', JSON.stringify(bookings));
+
+  viewBookings();
+};
+window.loadAdminFilters = function(){
+  const select = $('#filterDestination');
+  select.html('<option value="">All destinations</option>');
+  DESTINATIONS.forEach(d => {
+    select.append(`<option value="${d.title}">${d.title}</option>`);
+  });
+};
+window.applyFilter = function(){
+  const name = $('#searchName').val().toLowerCase();
+  const dest = $('#filterDestination').val();
+
+  const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  let html = '<h3>Filtered Results</h3>';
+
+  const filtered = bookings.filter(b => {
+    const matchName = b.name.toLowerCase().includes(name);
+    const matchDest = dest ? b.destination === dest : true;
+    return matchName && matchDest;
+  });
+
+  if(filtered.length === 0){
+    html += '<p>No matching records.</p>';
+  } else {
+    filtered.forEach(b => {
+  html += `
+    <div style="margin-bottom:12px">
+      <strong>${b.name}</strong><br>
+      Email: ${b.email}<br>
+      Phone: ${b.phone}<br>
+      Destination: ${b.destination}<br>
+      Date: ${b.date}<br>
+      Group: ${b.groupSize}<br>
+      Total: ₱${b.total}
+    </div>
+    <hr>
+  `;
+});
+
+  }
+
+  $('#adminContent').html(html);
+};
+window.updateStatus = function(index, status){
+  const bookings = JSON.parse(localStorage.getItem('lg_bookings') || '[]');
+  bookings[index].status = status;
+  localStorage.setItem('lg_bookings', JSON.stringify(bookings));
+};
+
+
+
+
+</script>
+
+
+</body>
+</html>
